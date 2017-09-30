@@ -1,53 +1,75 @@
-const e = 2.7182818; //Euler's constant
-const pi = 3.1415936;
+const e = 2.718281846; //Euler's constant
+const pi = 3.141592654;
 
-function pow(a, b) {
-  let p = 1; //Product
-  for (i = 0; i < b; i ++) {p *= a;} //Multiplying by a b times
-  return p;
+function pow(base, exponent) {
+  let product = 1;
+  
+  for (let i = 0; i < exponent; i ++) {
+    product *= base;
+  }
+  
+  return product;
 }
 
-function fact(x) {
-  let p = 1; //Product
-  for (i = 1; i <= x; i ++) {p *= i} //Multiplying all natural numbers up to and including x
-  return p;
+function factorial(n) {
+  let product = 1;
+  
+  for (let i = 1; i <= n; i ++) {
+    product *= i
+  }
+  
+  return product;
 }
 
-function Derivative(f, p) {
-  return x => (f(x + 1 / pow(10, p)) - f(x)) * pow(10, p); //An approximation of the derivative lim(h -> 0) (f(x + h) - f(x))/h = lim(t -> inf) (f(x + 1 / t) - f(x)) / (1 / t)
-}
-
-function Integral(f, p) {
-  return function(a, b) {
-    let deltaX = (b - a) / pow(10, p), sum = 0; //10^p number of rectangles of approximation of integral
-    for (let i = 0; i <= (b - a) / deltaX; i ++) {sum += f(a + i * deltaX);} //Riemann sum
-    return sum * deltaX; //Multiplying by the width, distributed into the sum
+//Standard approximation of the derivative (f(x + h) - f(x)) / h
+function derivative(f) {
+  return function(x) {
+    (f(x + 0.00001) - f(x)) / 0.00001;
   };
 }
 
-function createPolynomial(coeff) {
-  return function(x) {
+//Riemann sum approximation of integral
+function integral(f) {
+  return function(a, b) {
+    const deltaX = (b - a) / 100000;
     let sum = 0;
-    for (let i = 0; i < coeff.length; i ++) {sum += coeff[i] * pow(x, i);} //The polynomial with coefficients in coeff
+    
+    for (let i = 0; i <= (b - a) / deltaX; i ++) {
+      sum += f(a + i * deltaX) * deltaX;
+    }
+    
     return sum;
   };
 }
 
-let sinMac = new Array; //Maclaurin expansion coefficents for sin
-let cosMac = new Array; //Maclaurin expansion coefficients for cos
-let eMac = new Array; //Maclaurin expansion coefficients for e^x
+//Function to make polynomials and Maclaurin expansions
+function createPolynomial(coefficients) {
+  return function(x) {
+    let sum = 0;
+    
+    for (let i = 0; i < coefficients.length; i ++) {
+      sum += coefficients[i] * pow(x, i);
+    }
+    
+    return sum;
+  };
+}
+
+let sinMac = []; //Maclaurin expansion coefficents for sin
+let cosMac = []; //Maclaurin expansion coefficients for cos
+let eMac = []; //Maclaurin expansion coefficients for e^x
 
 //Creating the coefficients
-for (let i = 0; i < 20; i ++) {
+for (let i = 0; i < 25; i ++) {
   if (i % 2 == 0) {
     sinMac.push(0);
-    cosMac.push(pow(-1, i / 2) / fact(i));
-    eMac.push(1 / fact(i));
+    cosMac.push(pow(-1, i / 2) / factorial(i));
   } else {
-    sinMac.push(pow(-1, (i - 1) / 2) / fact(i));
+    sinMac.push(pow(-1, (i - 1) / 2) / factorial(i));
     cosMac.push(0);
-    eMac.push(1 / fact(i));
   }
+  
+  eMac.push(1 / factorial(i));
 }
 
 //Creating the polynomials
@@ -56,10 +78,18 @@ let cos = createPolynomial(cosMac);
 let exp = createPolynomial(eMac);
 
 //Making sure it works
-console.log("Int sin: " + Integral(sin, 4)(0, pi));
-console.log("Int cos: " + Integral(cos, 4)(0, pi));
-console.log("Int exp: " + Integral(exp, 4)(0, 2));
+console.log("Integral of sin: " + integral(sin)(0, pi));
+console.log("Integral of cos: " + integral(cos)(0, pi));
+console.log("Integral of exp: " + integral(exp)(0, 2));
 
-console.log("Derv sin: " + Derivative(sin, 4)(pi));
-console.log("Derv cos: " + Derivative(cos, 4)(pi));
-console.log("Derv exp: " + Derivative(exp, 4)(1));
+console.log("Derivative of sin: " + derivative(sin)(pi));
+console.log("Derivative of cos: " + derivative(cos)(pi));
+console.log("Derivative of exp: " + derivative(exp)(1));
+
+//Finding non-elementary integral approximation
+function powtow(x) {
+  return pow(x, x);
+}
+
+console.log(integral(powtow)(0, 1));
+console.log(derivative(powotw)(1));
