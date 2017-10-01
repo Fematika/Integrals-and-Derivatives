@@ -25,12 +25,12 @@ const factorial = n => {
 const derivative = f => x => (f(x + 0.00001) - f(x)) / 0.00001
 
 //Riemann sum approximation of integral
-const integral = fn => (a, b) => {
+const integral = f => (a, b) => {
   const deltaX = (b - a) / 100000;
   let sum = 0;
 
   for (let i = 0; i <= (b - a) / deltaX; i ++) {
-    sum += fn(a + i * deltaX) * deltaX;
+    sum += f(a + i * deltaX) * deltaX;
   }
 
   return sum
