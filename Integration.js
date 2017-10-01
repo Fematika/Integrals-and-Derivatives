@@ -1,7 +1,7 @@
 const e = 2.718281846; //Euler's constant
 const pi = 3.141592654;
 
-function pow(base, exponent) {
+const pow = (base, exponent) => {
   let product = 1;
   
   for (let i = 0; i < exponent; i ++) {
@@ -11,7 +11,7 @@ function pow(base, exponent) {
   return product;
 }
 
-function factorial(n) {
+const factorial = n => {
   let product = 1;
   
   for (let i = 1; i <= n; i ++) {
@@ -22,37 +22,29 @@ function factorial(n) {
 }
 
 //Standard approximation of the derivative (f(x + h) - f(x)) / h
-function derivative(f) {
-  return function(x) {
-    (f(x + 0.00001) - f(x)) / 0.00001;
-  };
-}
+const derivative = f => x => (f(x + 0.00001) - f(x)) / 0.00001
 
 //Riemann sum approximation of integral
-function integral(f) {
-  return function(a, b) {
-    const deltaX = (b - a) / 100000;
-    let sum = 0;
-    
-    for (let i = 0; i <= (b - a) / deltaX; i ++) {
-      sum += f(a + i * deltaX) * deltaX;
-    }
-    
-    return sum;
-  };
+const integral = f => (a, b) => {
+  const deltaX = (b - a) / 100000;
+  let sum = 0;
+
+  for (let i = 0; i <= (b - a) / deltaX; i ++) {
+    sum += f(a + i * deltaX) * deltaX;
+  }
+
+  return sum
 }
 
 //Function to make polynomials and Maclaurin expansions
-function createPolynomial(coefficients) {
-  return function(x) {
-    let sum = 0;
-    
-    for (let i = 0; i < coefficients.length; i ++) {
-      sum += coefficients[i] * pow(x, i);
-    }
-    
-    return sum;
-  };
+const createPolynomial = coefficients => x => {
+  let sum = 0;
+
+  for (let i = 0; i < coefficients.length; i ++) {
+    sum += coefficients[i] * pow(x, i);
+  }
+
+  return sum;
 }
 
 let sinMac = []; //Maclaurin expansion coefficents for sin
@@ -87,9 +79,7 @@ console.log("Derivative of cos: " + derivative(cos)(pi));
 console.log("Derivative of exp: " + derivative(exp)(1));
 
 //Finding non-elementary integral approximation
-function powtow(x) {
-  return pow(x, x);
-}
+const powtow = x => pow(x, x)
 
 console.log(integral(powtow)(0, 1));
 console.log(derivative(powotw)(1));
